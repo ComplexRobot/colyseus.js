@@ -172,32 +172,32 @@ export class Client {
         if (simpleConnect) {
             room.connection.connect(this.buildEndpoint(response.room, options));
         } else {
-          room.connect(this.buildEndpoint(response.room, options), response.devMode && (async () => {
-              console.info(`[Colyseus devMode]: ${String.fromCodePoint(0x1F504)} Re-establishing connection with room id '${room.roomId}'...`); // 🔄
+            room.connect(this.buildEndpoint(response.room, options), response.devMode && (async () => {
+                console.info(`[Colyseus devMode]: ${String.fromCodePoint(0x1F504)} Re-establishing connection with room id '${room.roomId}'...`); // 🔄
 
-              let retryCount = 0;
-              let retryMaxRetries = 8;
+                let retryCount = 0;
+                let retryMaxRetries = 8;
 
-              const retryReconnection = async () => {
-                  retryCount++;
+                const retryReconnection = async () => {
+                    retryCount++;
 
-                  try {
-                      await this.consumeSeatReservation(response, rootSchema, targetRoom);
-                      console.info(`[Colyseus devMode]: ${String.fromCodePoint(0x2705)} Successfully re-established connection with room '${room.roomId}'`); // ✅
+                    try {
+                        await this.consumeSeatReservation(response, rootSchema, targetRoom);
+                        console.info(`[Colyseus devMode]: ${String.fromCodePoint(0x2705)} Successfully re-established connection with room '${room.roomId}'`); // ✅
 
-                  } catch (e) {
-                      if (retryCount < retryMaxRetries) {
-                          console.info(`[Colyseus devMode]: ${String.fromCodePoint(0x1F504)} retrying... (${retryCount} out of ${retryMaxRetries})`); // 🔄
-                          setTimeout(retryReconnection, 2000);
+                    } catch (e) {
+                        if (retryCount < retryMaxRetries) {
+                            console.info(`[Colyseus devMode]: ${String.fromCodePoint(0x1F504)} retrying... (${retryCount} out of ${retryMaxRetries})`); // 🔄
+                            setTimeout(retryReconnection, 2000);
 
-                      } else {
-                          console.info(`[Colyseus devMode]: ${String.fromCodePoint(0x274C)} Failed to reconnect. Is your server running? Please check server logs.`); // ❌
-                      }
-                  }
-              };
+                        } else {
+                            console.info(`[Colyseus devMode]: ${String.fromCodePoint(0x274C)} Failed to reconnect. Is your server running? Please check server logs.`); // ❌
+                        }
+                    }
+                };
 
-              setTimeout(retryReconnection, 2000);
-          }), targetRoom);
+                setTimeout(retryReconnection, 2000);
+            }), targetRoom);
         }
 
         return new Promise((resolve, reject) => {
